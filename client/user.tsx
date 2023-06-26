@@ -14,6 +14,11 @@ const App = () => {
         setBooks(BookList)
     }
 
+    const handleDelete = async (bookId) => {
+        await trpc.library.bookDelete.mutate(bookId)
+        fetchData();
+      };
+
     return(
         <div>
             <table>
@@ -32,6 +37,9 @@ const App = () => {
                             <td>{book.author}</td>
                             <td>{book.price}</td>
                             <td>{book.quantity}</td>
+                           <td>
+                <button onClick={() => handleDelete(book.id)}>Delete</button>
+              </td>
                         </tr>
                     ))}
                 </tbody>

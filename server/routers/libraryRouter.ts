@@ -58,6 +58,40 @@ export const libraryRouter = router({
         data: { title, author, price, quantity },
       });
       return updatebook;
-    })  
+    }) ,
+
+    bookListByPriceRange: publicProcedure
+    .input(z.object({
+      minPrice: z.number().optional(),
+      maxPrice: z.number().optional(),
+    }))
+    .query(async (opts) => {
+      const { minPrice, maxPrice } = opts.input;
+      let books;
+
+      if (minPrice !== undefined && maxPrice !== undefined) {
+        books = await prisma.book.findMany({
+          where: {
+            AND: [
+              { price: { gte: minPrice } },
+              { price: { lte: maxPrice } }
+            ]
+          },
+        });
+      } else {
+        books = await prisma.book.findMany();
+      }
+
+      return { books, message: 'Got the book names' };
+      
+    }),
+
+    bookAuthor : publicProcedure.input(z.string()).query(async (opts) => {
+      const {input} = opts;
+      const bookAuthor = await prisma.book.findMany({where: {author:{contains:input}}})
+      return bookAuthor;
+    })
+
+    
     
 });
